@@ -30,7 +30,7 @@ var svg = d3.select("body").append("svg")
 
 var defs = svg.append("defs").attr("id", "imgdefs")
 
-d3.json("/src/data/characters.json", function(root) {
+d3.json("../src/data/characters.json", function(root) {
 
     var node = svg.datum(root).selectAll(".node").data(pack.nodes);
 
