@@ -1,0 +1,60 @@
+{
+  "children": [
+    {
+      "name": "House Stark",
+      "house": true,
+      "children": [
+        {
+          "name": "John Snow",
+          "url": "src/img/edd.png",
+          "mainCharacter" : true,
+          "id": 1
+        },
+        {
+          "name": "Rickon Stark",
+          "url": "src/img/edd.png",
+          "id": 2
+        },
+        {
+          "name": "John Snow",
+          "url": "src/img/edd.png",
+          "mainCharacter" : true,
+          "id": 1
+        },
+        {
+          "name": "John Snow",
+          "url": "src/img/edd.png",
+          "mainCharacter" : true,
+          "id": 1
+        },
+        {
+          "name": "Rickon Stark",
+          "url": "src/img/edd.png",
+          "id": 2
+        }
+      ]
+    },
+    {
+      "name": "House Stark",
+      "house": true,
+      "children": [
+        {
+          "name": "Rickon Stark",
+          "url": "src/img/edd.png",
+          "id": 2
+        },
+        {
+          "name": "John Snow",
+          "url": "src/img/edd.png",
+          "mainCharacter" : true,
+          "id": 1
+        },
+        {
+          "name": "Rickon Stark",
+          "url": "src/img/edd.png",
+          "id": 2
+        }
+      ]
+    }
+  ]
+}
