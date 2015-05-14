@@ -19,7 +19,9 @@
     "exports": true,
     "require": true,
     "process": true,
-    "module": true
+    "module": true,
+    "d3": true,
+    "define": true
   }
 }
 
