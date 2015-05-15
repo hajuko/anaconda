@@ -6,53 +6,53 @@
       "children": [
         {
           "name": "John Snow",
-          "url": "src/img/edd.png",
+          "url": "src/img/characters/eddard_stark.jpg",
           "mainCharacter" : true,
           "id": 1
         },
         {
           "name": "Rickon Stark",
-          "url": "src/img/edd.png",
+          "url": "src/img/characters/eddard_stark.jpg",
           "id": 2
         },
         {
-          "name": "John Snow",
-          "url": "src/img/edd.png",
+          "name": "Allister Thorne",
+          "url": "src/img/characters/allister_thorne.jpg",
           "mainCharacter" : true,
-          "id": 1
+          "id": 3
         },
         {
           "name": "John Snow",
-          "url": "src/img/edd.png",
+          "url": "src/img/characters/eddard_stark.jpg",
           "mainCharacter" : true,
-          "id": 1
+          "id": 4
         },
         {
-          "name": "Rickon Stark",
-          "url": "src/img/edd.png",
-          "id": 2
+          "name": "Anguy",
+          "url": "src/img/characters/anguy.jpg",
+          "id": 5
         }
       ]
     },
     {
-      "name": "House Stark",
+      "name": "House Fubar",
       "house": true,
       "children": [
         {
-          "name": "Rickon Stark",
-          "url": "src/img/edd.png",
-          "id": 2
+          "name": "Maester Aemon",
+          "url": "src/img/characters/maester_aemon.jpg",
+          "id": 6
         },
         {
-          "name": "John Snow",
-          "url": "src/img/edd.png",
+          "name": "Areo Hotah",
+          "url": "src/img/characters/areo_hotah.jpg",
           "mainCharacter" : true,
-          "id": 1
+          "id": 7
         },
         {
           "name": "Rickon Stark",
-          "url": "src/img/edd.png",
-          "id": 2
+          "url": "src/img/characters/eddard_stark.jpg",
+          "id": 8
         }
       ]
     }
