@@ -1,3 +1,7 @@
 $(function() {
-    new got.Map({});
+    var settings = {
+        characterSize: 100
+    };
+
+    new got.Map(settings);
 });

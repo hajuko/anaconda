@@ -1,11 +1,6 @@
 var got = {};
 
-got.customLeaflet = {
-    crs: L.Util.extend({}, L.CRS, {
-        projection: L.Projection.LonLat,
-        transformation: new L.Transformation(1, 0, 1, 0)
-    })
-};
+var factor = 256 * 8;
 
 L.Map = L.Map.extend({
     // Rounding removed
@@ -13,96 +8,123 @@ L.Map = L.Map.extend({
         var projectedPoint = this.project(L.latLng(latLng));
 
         return projectedPoint._subtract(this.getPixelOrigin());
-    },
-
-    _getBoundsOffset: function (pxBounds, maxBounds, zoom) {
-        var swOffset = this.project(maxBounds.getSouthWest(), zoom).subtract(pxBounds.min),
-            neOffset = this.project(maxBounds.getNorthEast(), zoom).subtract(pxBounds.max),
-
-            dx = this._rebound(swOffset.x, - neOffset.x),
-            dy = this._rebound(swOffset.y, - neOffset.y);
-
-        return L.point(dx, dy);
     }
+    //
+    //_getBoundsOffset: function (pxBounds, maxBounds, zoom) {
+    //
+    //    var swOffset = this.project(maxBounds.getSouthWest(), zoom).subtract(pxBounds.min),
+    //        neOffset = this.project(maxBounds.getNorthEast(), zoom).subtract(pxBounds.max),
+    //
+    //        dx = this._rebound(swOffset.x, - neOffset.x),
+    //        dy = this._rebound(swOffset.y, - neOffset.y);
+    //
+    //    return new L.Point(dx, dy);
+    //}
 });
 
-L.Circle = L.Circle.extend({
-    _getLatRadius: function() {
-        return this._mRadius;
-    },
-    _getLngRadius: function () {
-        return this._mRadius;
+L.ImageOverlay = L.ImageOverlay.extend({
+    _initImage: function () {
+        console.log('fubar');
+        var img = this._image =
+            L.DomUtil.create('img', this.options.className + ' leaflet-image-layer ' + (this._zoomAnimated ? 'leaflet-zoom-animated' : ''));
+
+        img.onselectstart = L.Util.falseFn;
+        img.onmousemove = L.Util.falseFn;
+
+        img.onload = L.bind(this.fire, this, 'load');
+
+        if (this.options.crossOrigin) {
+            img.crossOrigin = '';
+        }
+
+        img.src = this._url;
+        img.alt = this.options.alt;
     }
 });
-
 got.Map = function(settings) {
-    var that = this;
-    this.tileLayer = L.tileLayer(
-        '',
-        {
-            noWrap: true,
-            updateWhenIdle: false
-        }
-    );
+    var map;
+    var tileLayer;
+    var characterLayer = new L.layerGroup();
+    var zoomReference = 4;
+    var scaleFactor = 1 / Math.pow(2, zoomReference);
 
-    this.map = new L.map(
-        'leaflet-map',
-        {
-            crs: got.customLeaflet.crs,
-            center: [0, 0],
-            attributionControl: false,
-            inertia: false,
-            zoom: 0,
-            maxZoom: 5
+    console.log(scaleFactor);
 
-        }
-    );
 
-    this.pointToLatLng = function(x, y) {
-        var point = L.point(x, y);
+    init();
+    addCharacters(characters);
 
-        return this.map.unproject(point,  0);
-    };
+    function init() {
+        tileLayer = L.tileLayer(
+            '',
+            {
+                noWrap: true,
+                updateWhenIdle: false
+            }
+        );
 
-    this.map.addLayer(this.tileLayer);
+        map = new L.map(
+            'leaflet-map',
+            {
+                crs: L.CRS.Simple,
+                center: [0, 0],
+                attributionControl: false,
+                inertia: false,
+                zoom: 0,
+                maxZoom: 5
+            }
+        );
 
-    var bounds = L.latLngBounds(
-        this.pointToLatLng(0, 0),
-        this.pointToLatLng(500, 500)
-    );
+        map.addLayer(tileLayer);
 
-    var bounds2 = L.latLngBounds(
-        this.pointToLatLng(0, 0),
-        this.pointToLatLng(10, 10)
-    );
 
-    var border = L.rectangle(bounds);
-    var rect = L.rectangle(bounds2);
 
-    rect.addTo(this.map);
+        var bounds = L.latLngBounds(
+            scaledCoordinates([0, 0]),
+            scaledCoordinates([4000, 4000])
+        );
 
-    border.addTo(this.map);
+        var border = L.rectangle(bounds, {fillOpacity: 0});
 
-    var test = L.circle(
-        that.pointToLatLng(0, 0),
-        5,
-        {
-            fillColor: 'red'
-        }
-    );
+        border.addTo(map);
+        map.addLayer(characterLayer);
 
-    var test2 = L.circle(
-        that.pointToLatLng(10, 1),
-        1,
-        {
-            fillColor: 'red'
-        }
-    );
+        map.fitBounds(
+            bounds,
+            {
+                animate: false
+            }
+        );
 
-    test.addTo(this.map);
-    test2.addTo(this.map);
+
+    }
+
+    function scaledCoordinates(coordinates) {
+        return [coordinates[0] * scaleFactor, coordinates[1] * scaleFactor]
+    }
+
+    function addCharacters(characters) {
+        characters.forEach(function(character, i) {
+
+            var top = [character.coordinates[0] + 200, character.coordinates[1] + 200]
+
+            var bounds = L.latLngBounds(
+                scaledCoordinates(character.coordinates),
+                scaledCoordinates(top)
+            );
+
+            L.imageOverlay(character.url, bounds, {className: 'character'}).addTo(characterLayer);
+
+            console.log(character);
+        });
+    }
+
 };
 
 $(function() {
-    new got.Map({});
+    var settings = {
+        characterSize: 100
+    };
+
+    new got.Map(settings);
 });

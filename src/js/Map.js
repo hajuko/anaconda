@@ -1,67 +1,79 @@
 got.Map = function(settings) {
-    var that = this;
-    this.tileLayer = L.tileLayer(
-        '',
-        {
-            noWrap: true,
-            updateWhenIdle: false
-        }
-    );
+    var map;
+    var tileLayer;
+    var characterLayer = new L.layerGroup();
+    var zoomReference = 4;
+    var scaleFactor = 1 / Math.pow(2, zoomReference);
 
-    this.map = new L.map(
-        'leaflet-map',
-        {
-            crs: got.customLeaflet.crs,
-            center: [0, 0],
-            attributionControl: false,
-            inertia: false,
-            zoom: 0,
-            maxZoom: 5
+    console.log(scaleFactor);
 
-        }
-    );
 
-    this.pointToLatLng = function(x, y) {
-        var point = L.point(x, y);
+    init();
+    addCharacters(characters);
 
-        return this.map.unproject(point,  0);
-    };
+    function init() {
+        tileLayer = L.tileLayer(
+            '',
+            {
+                noWrap: true,
+                updateWhenIdle: false
+            }
+        );
 
-    this.map.addLayer(this.tileLayer);
+        map = new L.map(
+            'leaflet-map',
+            {
+                crs: L.CRS.Simple,
+                center: [0, 0],
+                attributionControl: false,
+                inertia: false,
+                zoom: 0,
+                maxZoom: 5
+            }
+        );
 
-    var bounds = L.latLngBounds(
-        this.pointToLatLng(0, 0),
-        this.pointToLatLng(500, 500)
-    );
+        map.addLayer(tileLayer);
 
-    var bounds2 = L.latLngBounds(
-        this.pointToLatLng(0, 0),
-        this.pointToLatLng(10, 10)
-    );
 
-    var border = L.rectangle(bounds);
-    var rect = L.rectangle(bounds2);
 
-    rect.addTo(this.map);
+        var bounds = L.latLngBounds(
+            scaledCoordinates([0, 0]),
+            scaledCoordinates([4000, 4000])
+        );
 
-    border.addTo(this.map);
+        var border = L.rectangle(bounds, {fillOpacity: 0});
 
-    var test = L.circle(
-        that.pointToLatLng(0, 0),
-        5,
-        {
-            fillColor: 'red'
-        }
-    );
+        border.addTo(map);
+        map.addLayer(characterLayer);
 
-    var test2 = L.circle(
-        that.pointToLatLng(10, 1),
-        1,
-        {
-            fillColor: 'red'
-        }
-    );
+        map.fitBounds(
+            bounds,
+            {
+                animate: false
+            }
+        );
 
-    test.addTo(this.map);
-    test2.addTo(this.map);
+
+    }
+
+    function scaledCoordinates(coordinates) {
+        return [coordinates[0] * scaleFactor, coordinates[1] * scaleFactor]
+    }
+
+    function addCharacters(characters) {
+        characters.forEach(function(character, i) {
+
+            var top = [character.coordinates[0] + 200, character.coordinates[1] + 200]
+
+            var bounds = L.latLngBounds(
+                scaledCoordinates(character.coordinates),
+                scaledCoordinates(top)
+            );
+
+            L.imageOverlay(character.url, bounds, {className: 'character'}).addTo(characterLayer);
+
+            console.log(character);
+        });
+    }
+
 };

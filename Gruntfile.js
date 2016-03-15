@@ -30,6 +30,7 @@ module.exports = function(grunt) {
             },
             dist: {
                 src: [
+                    'src/data/characters.js',
                     'src/js/namespace.js',
                     'src/js/custom-leaflet.js',
                     'src/js/Map.js',
