@@ -1,40 +1,3 @@
-var got = {};
-
-got.customLeaflet = {
-    crs: L.Util.extend({}, L.CRS, {
-        projection: L.Projection.LonLat,
-        transformation: new L.Transformation(1, 0, 1, 0)
-    })
-};
-
-L.Map = L.Map.extend({
-    // Rounding removed
-    latLngToLayerPoint: function(latLng) {
-        var projectedPoint = this.project(L.latLng(latLng));
-
-        return projectedPoint._subtract(this.getPixelOrigin());
-    },
-
-    _getBoundsOffset: function (pxBounds, maxBounds, zoom) {
-        var swOffset = this.project(maxBounds.getSouthWest(), zoom).subtract(pxBounds.min),
-            neOffset = this.project(maxBounds.getNorthEast(), zoom).subtract(pxBounds.max),
-
-            dx = this._rebound(swOffset.x, - neOffset.x),
-            dy = this._rebound(swOffset.y, - neOffset.y);
-
-        return L.point(dx, dy);
-    }
-});
-
-L.Circle = L.Circle.extend({
-    _getLatRadius: function() {
-        return this._mRadius;
-    },
-    _getLngRadius: function () {
-        return this._mRadius;
-    }
-});
-
 got.Map = function(settings) {
     var that = this;
     this.tileLayer = L.tileLayer(
@@ -102,7 +65,3 @@ got.Map = function(settings) {
     test.addTo(this.map);
     test2.addTo(this.map);
 };
-
-$(function() {
-    new got.Map({});
-});

@@ -6,6 +6,6 @@
     "d3": "3.5.x",
     "jquery": "2.1.x",
     "requirejs": "2.1.17",
-    "leaflet": "v0.7.7"
+    "leaflet": "v1.0"
   }
 }

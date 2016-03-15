@@ -16,21 +16,26 @@ module.exports = function(grunt) {
         },
         watch: {
             styles: {
-                files: ['src/less/**/*.less', 'src/ts/**/*.ts'], // Which files to watch
-                tasks: ['less', 'ts'],
+                files: ['src/less/**/*.less', 'src/js/**/*.js'],
+                tasks: ['less', 'concat'],
                 options: {
                     nospawn: true,
                     livereload: true
                 }
             }
         },
-        ts: {
+        concat: {
             options: {
-                sourceMap: false
+                separator: '\n'
             },
-            default : {
-                src: ["src/ts/main.ts"],
-                out: 'app.js'
+            dist: {
+                src: [
+                    'src/js/namespace.js',
+                    'src/js/custom-leaflet.js',
+                    'src/js/Map.js',
+                    'src/js/main.js'
+                ],
+                dest: 'app.js'
             }
         }
     });
