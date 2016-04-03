@@ -4,15 +4,27 @@ got.Map = function(settings) {
     var characterLayer = new L.layerGroup();
     var zoomReference = 4;
     var scaleFactor = 1 / Math.pow(2, zoomReference);
+    var that = this;
 
-    console.log(scaleFactor);
+    var templates = {
+        episodePicker: $('#t-episode-picker').html()
+    };
 
+    addEpisodePicker();
+
+    var $episodeSelection = $('#episode-selection');
+    var $seasonSelection = $('#season-selection');
 
     init();
-    addCharacters(characters);
+    var characters = createCharacters(rawCharacters);
+    selectEpisodeAndSeason();
 
     function init() {
+        that.showCharacterInfo = showCharacterInfo;
+        that.scaledCoordinates = scaledCoordinates;
+        that.scaleFactor = scaleFactor;
         tileLayer = L.tileLayer(
+            //'src/data/tiles/{z}/{x}/{y}.png',
             '',
             {
                 noWrap: true,
@@ -28,13 +40,13 @@ got.Map = function(settings) {
                 attributionControl: false,
                 inertia: false,
                 zoom: 0,
-                maxZoom: 5
+                maxZoom: 5,
+                preferCanvas: true
             }
         );
 
-        map.addLayer(tileLayer);
 
-
+        //map.addLayer(tileLayer);
 
         var bounds = L.latLngBounds(
             scaledCoordinates([0, 0]),
@@ -53,27 +65,70 @@ got.Map = function(settings) {
             }
         );
 
+        $episodeSelection.on('change', selectEpisodeAndSeason);
+        $seasonSelection.on('change', selectEpisodeAndSeason);
+    }
 
+    function selectEpisodeAndSeason() {
+        var episodeFilter = new got.EpisodeFilter({
+            season: $seasonSelection.val(),
+            episode: $episodeSelection.val()
+        });
+
+        clearCharacters();
+        updateCharacters([episodeFilter]);
     }
 
     function scaledCoordinates(coordinates) {
         return [coordinates[0] * scaleFactor, coordinates[1] * scaleFactor]
     }
 
-    function addCharacters(characters) {
-        characters.forEach(function(character, i) {
+    function createCharacters(characters) {
+        var chars = [];
 
-            var top = [character.coordinates[0] + 200, character.coordinates[1] + 200]
+        characters.forEach(function(rawCharacter, i) {
+            var character = new got.Character(rawCharacter, that);
 
-            var bounds = L.latLngBounds(
-                scaledCoordinates(character.coordinates),
-                scaledCoordinates(top)
-            );
-
-            L.imageOverlay(character.url, bounds, {className: 'character'}).addTo(characterLayer);
-
-            console.log(character);
+            chars.push(character);
         });
+
+        return chars;
     }
 
+    function clearCharacters() {
+        map.removeLayer(characterLayer);
+        characterLayer = L.layerGroup();
+    }
+
+    function updateCharacters(filters) {
+        filters = filters || [];
+        var filteredCharacters = characters;
+
+        filters.forEach(function(filter) {
+            filteredCharacters = filter.apply(filteredCharacters);
+        });
+
+        filteredCharacters.forEach(function(character) {
+            addCharacter(character, characterLayer);
+        });
+
+        characterLayer.addTo(map);
+    }
+
+    function addCharacter(character, layer) {
+        character.image.addTo(layer);
+        character.frame.addTo(layer);
+        character.text.addTo(layer);
+    }
+
+    function showCharacterInfo(character) {
+        $('#info-box').html(character.name);
+        console.log(character);
+    }
+
+    function addEpisodePicker() {
+        $('#episode-picker').html(
+            _.template(templates.episodePicker)()
+        );
+    }
 };

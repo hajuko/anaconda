@@ -1,28 +1,82 @@
-var factor = 256 * 8;
+L.Text = L.Layer.extend({
+    //includes: L.Layer.Events,
 
-L.Map = L.Map.extend({
-    // Rounding removed
-    latLngToLayerPoint: function(latLng) {
-        var projectedPoint = this.project(L.latLng(latLng));
+    initialize: function (_text, _coordinates, _size, font) {
+        this.font = font || 'Arial';
+        this.text = _text;
+        this.coordinates = _coordinates;
+        this.size = _size;
+        console.log('init');
 
-        return projectedPoint._subtract(this.getPixelOrigin());
+    },
+
+    onAdd: function (map) {
+        this._map = map;
+        this._ctx = this._map._renderer._ctx;
+
+        console.log('onAdd');
+        this._drawText();
+
+        map
+            .on('moveend', this._drawText, this)
+            .on('viewreset', function() {
+                console.log('zoomstart');
+            }, this)
+    },
+
+    onRemove: function (map) {
+        console.log('remove');
+        map.off({
+            moveend: this._drawText,
+            viewreset: this._onViewReset
+        }, this);
+
+        this._requestUpdate();
+        this._map = null;
+    },
+
+    _onViewReset: function (e) {
+        if (e && e.hard) {
+            this._drawText();
+        }
+    },
+
+    _requestUpdate: function () {
+        if (this._map && !L.Path._updateRequest) {
+            L.Path._updateRequest = L.Util.requestAnimFrame(this._fireMapMoveEnd, this._map);
+        }
+    },
+
+    _fireMapMoveEnd: function () {
+        L.Path._updateRequest = null;
+        this.fire('moveend');
+    },
+
+    updateText: function(text) {
+        this.text = text;
+    },
+
+    _drawText: function () {
+        var pos = this._map.latLngToLayerPoint(this.coordinates);
+        console.log(this._map.getZoom());
+        var size = this.size * Math.pow(2, this._map.getZoom());
+        console.log(size);
+
+        console.log('draw Text');
+
+        if (this.text !== '') {
+            this._ctx.fillStyle = this.color || '#000';
+            this._ctx.globalAlpha = 1;
+            this._ctx.font = size + 'px ' + this.font;
+            this._ctx.textBaseline = 'middle';
+            this._ctx.textAlign = 'center';
+            this._ctx.fillText(this.text, pos.x, pos.y);
+        }
     }
-    //
-    //_getBoundsOffset: function (pxBounds, maxBounds, zoom) {
-    //
-    //    var swOffset = this.project(maxBounds.getSouthWest(), zoom).subtract(pxBounds.min),
-    //        neOffset = this.project(maxBounds.getNorthEast(), zoom).subtract(pxBounds.max),
-    //
-    //        dx = this._rebound(swOffset.x, - neOffset.x),
-    //        dy = this._rebound(swOffset.y, - neOffset.y);
-    //
-    //    return new L.Point(dx, dy);
-    //}
 });
 
 L.ImageOverlay = L.ImageOverlay.extend({
     _initImage: function () {
-        console.log('fubar');
         var img = this._image =
             L.DomUtil.create('img', this.options.className + ' leaflet-image-layer ' + (this._zoomAnimated ? 'leaflet-zoom-animated' : ''));
 

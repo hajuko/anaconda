@@ -1,30 +1,155 @@
+var rawCharacters = [
+    {
+        name: "Eddard Stark",
+        pictures: {
+            main: "src/img/characters/eddard_stark.jpg"
+        },
+        mainCharacter : true,
+        id: 1,
+        coordinates: [100, 100],
+        description: "Lorem Ispum Dolor",
+        start: {
+            season: 1,
+            episode: 1
+        }
+    },
+    {
+        name: "Maester Aemon",
+        pictures: {
+            main: "src/img/characters/maester_aemon.jpg"
+        },
+        id: 2,
+        coordinates: [500, 400],
+        description: "Lorem Ispum Dolor",
+        start: {
+            season: 2,
+            episode: 5
+        }
+    },
+    {
+        name: "Allister Thorne",
+        pictures: {
+            main: "src/img/characters/allister_thorne.jpg"
+        },
+        mainCharacter : true,
+        id: 3,
+        coordinates: [200, 1000],
+        description: "Lorem Ispum Dolor",
+        start: {
+            season: 2,
+            episode: 5
+        }
+    },
+    {
+        name: "Aero Hotah",
+        pictures: {
+            main: "src/img/characters/areo_hotah.jpg"
+        },
+        mainCharacter : true,
+        id: 4,
+        coordinates: [1800, 1200],
+        description: "Lorem Ispum Dolor",
+        start: {
+            season: 5,
+            episode: 2
+        }
+    },
+    {
+        name: "Anguy",
+        pictures: {
+            main: "src/img/characters/anguy.jpg"
+        },
+        id: 5,
+        coordinates: [1200, 500],
+        description: "Lorem Ispum Dolor",
+        start: {
+            season: 2,
+            episode: 10
+        }
+    }
+];
+
 var got = {};
 
-var factor = 256 * 8;
+L.Text = L.Layer.extend({
+    //includes: L.Layer.Events,
 
-L.Map = L.Map.extend({
-    // Rounding removed
-    latLngToLayerPoint: function(latLng) {
-        var projectedPoint = this.project(L.latLng(latLng));
+    initialize: function (_text, _coordinates, _size, font) {
+        this.font = font || 'Arial';
+        this.text = _text;
+        this.coordinates = _coordinates;
+        this.size = _size;
+        console.log('init');
 
-        return projectedPoint._subtract(this.getPixelOrigin());
+    },
+
+    onAdd: function (map) {
+        this._map = map;
+        this._ctx = this._map._renderer._ctx;
+
+        console.log('onAdd');
+        this._drawText();
+
+        map
+            .on('moveend', this._drawText, this)
+            .on('viewreset', function() {
+                console.log('zoomstart');
+            }, this)
+    },
+
+    onRemove: function (map) {
+        console.log('remove');
+        map.off({
+            moveend: this._drawText,
+            viewreset: this._onViewReset
+        }, this);
+
+        this._requestUpdate();
+        this._map = null;
+    },
+
+    _onViewReset: function (e) {
+        if (e && e.hard) {
+            this._drawText();
+        }
+    },
+
+    _requestUpdate: function () {
+        if (this._map && !L.Path._updateRequest) {
+            L.Path._updateRequest = L.Util.requestAnimFrame(this._fireMapMoveEnd, this._map);
+        }
+    },
+
+    _fireMapMoveEnd: function () {
+        L.Path._updateRequest = null;
+        this.fire('moveend');
+    },
+
+    updateText: function(text) {
+        this.text = text;
+    },
+
+    _drawText: function () {
+        var pos = this._map.latLngToLayerPoint(this.coordinates);
+        console.log(this._map.getZoom());
+        var size = this.size * Math.pow(2, this._map.getZoom());
+        console.log(size);
+
+        console.log('draw Text');
+
+        if (this.text !== '') {
+            this._ctx.fillStyle = this.color || '#000';
+            this._ctx.globalAlpha = 1;
+            this._ctx.font = size + 'px ' + this.font;
+            this._ctx.textBaseline = 'middle';
+            this._ctx.textAlign = 'center';
+            this._ctx.fillText(this.text, pos.x, pos.y);
+        }
     }
-    //
-    //_getBoundsOffset: function (pxBounds, maxBounds, zoom) {
-    //
-    //    var swOffset = this.project(maxBounds.getSouthWest(), zoom).subtract(pxBounds.min),
-    //        neOffset = this.project(maxBounds.getNorthEast(), zoom).subtract(pxBounds.max),
-    //
-    //        dx = this._rebound(swOffset.x, - neOffset.x),
-    //        dy = this._rebound(swOffset.y, - neOffset.y);
-    //
-    //    return new L.Point(dx, dy);
-    //}
 });
 
 L.ImageOverlay = L.ImageOverlay.extend({
     _initImage: function () {
-        console.log('fubar');
         var img = this._image =
             L.DomUtil.create('img', this.options.className + ' leaflet-image-layer ' + (this._zoomAnimated ? 'leaflet-zoom-animated' : ''));
 
@@ -41,21 +166,110 @@ L.ImageOverlay = L.ImageOverlay.extend({
         img.alt = this.options.alt;
     }
 });
+
+got.Character = function(data, map) {
+    var top = map.scaledCoordinates([data.coordinates[0] + 200, data.coordinates[1] + 200]);
+    var bounds =  L.latLngBounds(map.scaledCoordinates(data.coordinates), top);
+    var textPostion = map.scaledCoordinates([data.coordinates[0] - 30, data.coordinates[1]  + 100]);
+
+    var that = this;
+
+    fontsize =
+
+    console.log(map.scaleFactor);
+
+    this.name = data.name;
+    this.pictures = data.pictures;
+    this.start = data.start;
+    this.text = new L.Text(this.name, textPostion, 2);
+
+    this.image = L.imageOverlay(
+        this.pictures.main,
+        bounds,
+        { className: 'character' }
+    );
+
+    this.frame = L.rectangle(
+        bounds,
+        {
+            fillOpacity: 0.5,
+            fillColor: 'red',
+            stroke: false
+        }
+    );
+
+    this.frame.on('click', function() {
+        map.showCharacterInfo(that);
+    });
+
+    this.drawText = function() {
+        that.text._drawText();
+    }
+};
+
+got.EpisodeFilter = function(options) {
+    var season = parseInt(options.season);
+    var episode = parseInt(options.episode);
+    // true if it should match exactly the selected season + episode instead of greate equals.
+    var match = options.match || false;
+
+    console.log(match);
+
+    function exactFilter(character) {
+        return season == character.start.season && episode == character.start.episode;
+    }
+
+    function greaterFilter(character) {
+        var characterSeason = character.start.season;
+        var characterEpisode = character.start.episode;
+
+        var isGreater = season >= characterSeason;
+
+        if (season == characterSeason) {
+            isGreater = episode >= characterEpisode;
+        }
+
+        return isGreater;
+    }
+
+    this.apply = function(array) {
+        return array.filter(function(character) {
+            if (match) {
+                return exactFilter(character);
+            } else {
+                return greaterFilter(character);
+            }
+        });
+    }
+};
+
 got.Map = function(settings) {
     var map;
     var tileLayer;
     var characterLayer = new L.layerGroup();
     var zoomReference = 4;
     var scaleFactor = 1 / Math.pow(2, zoomReference);
+    var that = this;
 
-    console.log(scaleFactor);
+    var templates = {
+        episodePicker: $('#t-episode-picker').html()
+    };
 
+    addEpisodePicker();
+
+    var $episodeSelection = $('#episode-selection');
+    var $seasonSelection = $('#season-selection');
 
     init();
-    addCharacters(characters);
+    var characters = createCharacters(rawCharacters);
+    selectEpisodeAndSeason();
 
     function init() {
+        that.showCharacterInfo = showCharacterInfo;
+        that.scaledCoordinates = scaledCoordinates;
+        that.scaleFactor = scaleFactor;
         tileLayer = L.tileLayer(
+            //'src/data/tiles/{z}/{x}/{y}.png',
             '',
             {
                 noWrap: true,
@@ -71,13 +285,13 @@ got.Map = function(settings) {
                 attributionControl: false,
                 inertia: false,
                 zoom: 0,
-                maxZoom: 5
+                maxZoom: 5,
+                preferCanvas: true
             }
         );
 
-        map.addLayer(tileLayer);
 
-
+        //map.addLayer(tileLayer);
 
         var bounds = L.latLngBounds(
             scaledCoordinates([0, 0]),
@@ -96,29 +310,72 @@ got.Map = function(settings) {
             }
         );
 
+        $episodeSelection.on('change', selectEpisodeAndSeason);
+        $seasonSelection.on('change', selectEpisodeAndSeason);
+    }
 
+    function selectEpisodeAndSeason() {
+        var episodeFilter = new got.EpisodeFilter({
+            season: $seasonSelection.val(),
+            episode: $episodeSelection.val()
+        });
+
+        clearCharacters();
+        updateCharacters([episodeFilter]);
     }
 
     function scaledCoordinates(coordinates) {
         return [coordinates[0] * scaleFactor, coordinates[1] * scaleFactor]
     }
 
-    function addCharacters(characters) {
-        characters.forEach(function(character, i) {
+    function createCharacters(characters) {
+        var chars = [];
 
-            var top = [character.coordinates[0] + 200, character.coordinates[1] + 200]
+        characters.forEach(function(rawCharacter, i) {
+            var character = new got.Character(rawCharacter, that);
 
-            var bounds = L.latLngBounds(
-                scaledCoordinates(character.coordinates),
-                scaledCoordinates(top)
-            );
-
-            L.imageOverlay(character.url, bounds, {className: 'character'}).addTo(characterLayer);
-
-            console.log(character);
+            chars.push(character);
         });
+
+        return chars;
     }
 
+    function clearCharacters() {
+        map.removeLayer(characterLayer);
+        characterLayer = L.layerGroup();
+    }
+
+    function updateCharacters(filters) {
+        filters = filters || [];
+        var filteredCharacters = characters;
+
+        filters.forEach(function(filter) {
+            filteredCharacters = filter.apply(filteredCharacters);
+        });
+
+        filteredCharacters.forEach(function(character) {
+            addCharacter(character, characterLayer);
+        });
+
+        characterLayer.addTo(map);
+    }
+
+    function addCharacter(character, layer) {
+        character.image.addTo(layer);
+        character.frame.addTo(layer);
+        character.text.addTo(layer);
+    }
+
+    function showCharacterInfo(character) {
+        $('#info-box').html(character.name);
+        console.log(character);
+    }
+
+    function addEpisodePicker() {
+        $('#episode-picker').html(
+            _.template(templates.episodePicker)()
+        );
+    }
 };
 
 $(function() {

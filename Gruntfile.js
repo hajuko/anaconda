@@ -33,6 +33,8 @@ module.exports = function(grunt) {
                     'src/data/characters.js',
                     'src/js/namespace.js',
                     'src/js/custom-leaflet.js',
+                    'src/js/Character.js',
+                    'src/js/Filter/EpisodeFilter.js',
                     'src/js/Map.js',
                     'src/js/main.js'
                 ],
