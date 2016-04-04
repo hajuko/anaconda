@@ -5,6 +5,7 @@
 		<!--<script>L_PREFER_CANVAS = true;</script>-->
 		<script src="src/lib/leaflet-src-new.js"></script>
 		<script src="src/lib/jquery-2.2.0.min.js"></script>
+		<script src="src/lib/typeahead.js"></script>
 		<script src="src/lib/underscore.js"></script>
 		<script src="app.js"></script>
 		<script type="text/javascript" src="src/data/characters.js"></script>
@@ -27,9 +28,16 @@
 
 	</head>
 	<body>
-		<div id="episode-picker"></div>
-		<div id="leaflet-map"></div>
-		<div id="info-box"></div>
+		<div class="topbar">
+			<div id="search">
+				<input class="typeahead" type="text" placeholder="Character Name">
+			</div>
+			<div id="episode-picker"></div>
+		</div>
+		<div class="main-container">
+			<div id="leaflet-map"></div>
+			<div id="info-box"></div>
+		</div>
 	</body>
 </html>
 

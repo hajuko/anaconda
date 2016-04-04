@@ -1,14 +1,15 @@
 got.Character = function(data, map) {
     var top = map.scaledCoordinates([data.coordinates[0] + 200, data.coordinates[1] + 200]);
     var bounds =  L.latLngBounds(map.scaledCoordinates(data.coordinates), top);
+    var outerBounds = L.latLngBounds(
+        map.scaledCoordinates([data.coordinates[0] - 50, data.coordinates[1]]),
+        top
+    );
     var textPostion = map.scaledCoordinates([data.coordinates[0] - 25, data.coordinates[1]  + 100]);
     var baseFonzSize = 26;
     var that = this;
 
     fontsize = baseFonzSize * map.scaleFactor;
-    console.log(fontsize);
-
-    console.log(map.scaleFactor);
 
     this.name = data.name;
     this.pictures = data.pictures;
@@ -22,10 +23,10 @@ got.Character = function(data, map) {
     );
 
     this.frame = L.rectangle(
-        bounds,
+        outerBounds,
         {
-            fillOpacity: 0.5,
-            fillColor: 'red',
+            fillOpacity: 0.1,
+            fillColor: '#000',
             stroke: false
         }
     );
