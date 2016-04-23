@@ -1,5 +1,11 @@
+var jasmine = require('jasmine-node');
+
 module.exports = function(grunt) {
     require('load-grunt-tasks')(grunt);
+
+    function fubar() {
+        console.log('asd');
+    }
 
     grunt.initConfig({
         less: {
@@ -16,7 +22,7 @@ module.exports = function(grunt) {
         },
         watch: {
             styles: {
-                files: ['src/less/**/*.less', 'src/js/**/*.js'],
+                files: ['src/less/**/*.less', 'src/js/**/*.js', 'crawler/**/*.js'],
                 tasks: ['less', 'concat'],
                 options: {
                     nospawn: true,

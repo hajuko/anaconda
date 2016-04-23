@@ -8,6 +8,7 @@ function crawlController(numberOfCrawls, data) {
     this.crawlsFinished = 0;
     this.characters = data;
     this.completeCharacters = {};
+    this.skipped = 0;
 
     this.crawlFinished = function(characters) {
         var that = this;
@@ -37,10 +38,18 @@ function crawlController(numberOfCrawls, data) {
 
         if (!imageUrl) {
             console.log('Image missing - skipping character: ' + characterName);
+            this.skipped++;
             return;
         }
 
-        request(imageUrl).pipe(fs.createWriteStream('src/img/characters_new/' + characterName + '.jpg'));
+
+        var dir = './src/img/characters_new';
+
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir)
+        }
+
+        request(imageUrl).pipe(fs.createWriteStream('./src/img/characters_new/' + characterName + '.jpg'));
 
         this.completeCharacters[characterName] = {name: characterName, imageUrl: imageUrl}
         var crawlsLeft = this.numberOfCrawls - this.crawlsFinished;
@@ -52,7 +61,7 @@ function crawlController(numberOfCrawls, data) {
         }
         console.log("*******************************\n*******************************");
         console.log("Finished all Characters");
-        console.log(this.completeCharacters);
+        console.log('skipped: ' + this.skipped);
     }
 }
 
@@ -83,14 +92,16 @@ function download(url, callbackFn) {
 }
 
 function downloadCharacters() {
-    var numberOfPages = 14;
+    var start = 13;
+    var limit = 14;
+    var numberOfPages = limit - start + 1;
+
     var _crawlController = new crawlController(numberOfPages, []);
 
     var baseUrl = "http://gameofthrones.wikia.com/wiki/Category:Characters?page=";
 
-    for (var i = 1; i <= numberOfPages; i++) {
+    for (var i = start; i <= limit; i++) {
         var currentUrl = baseUrl + i;
-
         console.log(currentUrl);
 
         download(currentUrl, function(html) {
@@ -108,6 +119,8 @@ function crawlCharacteList($, _crawlController) {
 
         characters.push(name.prop('alt'));
     });
+
+    console.log(characters);
 
     _crawlController.crawlFinished(characters);
 }
