@@ -1,7 +1,14 @@
 $(function() {
     var settings = {
-        characterSize: 100
+        characterSize: 100,
+        imagePath: 'src/img/characters/'
     };
 
-    new got.Map(settings);
+    $.ajax({
+        dataType: "json",
+        url: 'src/data/characters.json',
+        success: function(result) {
+            new got.Map(settings, result);
+        }
+    });
 });

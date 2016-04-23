@@ -1,4 +1,4 @@
-var rawCharacters = [
+var asd = [
     {
         name: "Eddard Stark",
         pictures: {
@@ -245,7 +245,7 @@ got.EpisodeFilter = function(options) {
     }
 };
 
-got.Map = function(settings) {
+got.Map = function(settings, rawCharacters) {
     var map;
     var tileLayer;
     var characterLayer = new L.layerGroup();
@@ -351,12 +351,21 @@ got.Map = function(settings) {
         var chars = [];
 
         characters.forEach(function(rawCharacter, i) {
+            addImageUrls(rawCharacter.pictures);
             var character = new got.Character(rawCharacter, that);
 
             chars.push(character);
         });
 
         return chars;
+    }
+
+    function addImageUrls(pictures) {
+        Object.keys(pictures).forEach(function(key) {
+            pictures[key] = settings.imagePath + pictures[key];
+
+        });
+
     }
 
     function clearCharacters() {
@@ -426,8 +435,15 @@ got.Map = function(settings) {
 
 $(function() {
     var settings = {
-        characterSize: 100
+        characterSize: 100,
+        imagePath: 'src/img/characters/'
     };
 
-    new got.Map(settings);
+    $.ajax({
+        dataType: "json",
+        url: 'src/data/characters.json',
+        success: function(result) {
+            new got.Map(settings, result);
+        }
+    });
 });

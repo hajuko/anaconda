@@ -1,4 +1,4 @@
-got.Map = function(settings) {
+got.Map = function(settings, rawCharacters) {
     var map;
     var tileLayer;
     var characterLayer = new L.layerGroup();
@@ -104,12 +104,21 @@ got.Map = function(settings) {
         var chars = [];
 
         characters.forEach(function(rawCharacter, i) {
+            addImageUrls(rawCharacter.pictures);
             var character = new got.Character(rawCharacter, that);
 
             chars.push(character);
         });
 
         return chars;
+    }
+
+    function addImageUrls(pictures) {
+        Object.keys(pictures).forEach(function(key) {
+            pictures[key] = settings.imagePath + pictures[key];
+
+        });
+
     }
 
     function clearCharacters() {

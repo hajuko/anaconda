@@ -1,60 +1,47 @@
-{
-  "children": [
+[
     {
-      "name": "House Stark",
-      "house": true,
-      "children": [
-        {
-          "name": "John Snow",
-          "url": "src/img/characters/eddard_stark.jpg",
-          "mainCharacter" : true,
-          "id": 1
+        "name": "Eddard Stark",
+        "pictures": {
+            "main": "eddard_stark.jpg"
         },
-        {
-          "name": "Rickon Stark",
-          "url": "src/img/characters/eddard_stark.jpg",
-          "id": 2
-        },
-        {
-          "name": "Allister Thorne",
-          "url": "src/img/characters/allister_thorne.jpg",
-          "mainCharacter" : true,
-          "id": 3
-        },
-        {
-          "name": "John Snow",
-          "url": "src/img/characters/eddard_stark.jpg",
-          "mainCharacter" : true,
-          "id": 4
-        },
-        {
-          "name": "Anguy",
-          "url": "src/img/characters/anguy.jpg",
-          "id": 5
+        "mainCharacter": true,
+        "coordinates": [
+            100,
+            100
+        ],
+        "start": {
+            "season": 1,
+            "episode": 1
         }
-      ]
     },
     {
-      "name": "House Fubar",
-      "house": true,
-      "children": [
-        {
-          "name": "Maester Aemon",
-          "url": "src/img/characters/maester_aemon.jpg",
-          "id": 6
+        "name": "Maester Aemon",
+        "pictures": {
+            "main": "maester_aemon.jpg"
         },
-        {
-          "name": "Areo Hotah",
-          "url": "src/img/characters/areo_hotah.jpg",
-          "mainCharacter" : true,
-          "id": 7
-        },
-        {
-          "name": "Rickon Stark",
-          "url": "src/img/characters/eddard_stark.jpg",
-          "id": 8
+        "mainCharacter": true,
+        "coordinates": [
+            500,
+            500
+        ],
+        "start": {
+            "season": 2,
+            "episode": 5
         }
-      ]
+    },
+    {
+        "name": "Allister Thorne",
+        "pictures": {
+            "main": "allister_thorne.jpg"
+        },
+        "mainCharacter": false,
+        "coordinates": [
+            200,
+            1000
+        ],
+        "start": {
+            "season": 2,
+            "episode": 5
+        }
     }
-  ]
-}
+]

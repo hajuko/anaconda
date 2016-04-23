@@ -1,4 +1,4 @@
-var rawCharacters = [
+var asd = [
     {
         name: "Eddard Stark",
         pictures: {
