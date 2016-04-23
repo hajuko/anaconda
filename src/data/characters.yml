@@ -1,0 +1,30 @@
+-
+    name: Eddard Stark
+    pictures:
+        main: eddard_stark.jpg
+    mainCharacter: true
+    coordinates: [100, 100]
+    start:
+        season: 1
+        episode: 1
+
+
+-
+    name: Maester Aemon
+    pictures:
+        main: maester_aemon.jpg
+    mainCharacter: true
+    coordinates: [500, 500]
+    start:
+        season: 2
+        episode: 5
+
+-
+    name: Allister Thorne
+    pictures:
+        main: allister_thorne.jpg
+    mainCharacter: false
+    coordinates: [200, 1000]
+    start:
+        season: 2
+        episode: 5

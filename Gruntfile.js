@@ -3,10 +3,6 @@ var jasmine = require('jasmine-node');
 module.exports = function(grunt) {
     require('load-grunt-tasks')(grunt);
 
-    function fubar() {
-        console.log('asd');
-    }
-
     grunt.initConfig({
         less: {
             development: {
@@ -22,8 +18,8 @@ module.exports = function(grunt) {
         },
         watch: {
             styles: {
-                files: ['src/less/**/*.less', 'src/js/**/*.js', 'crawler/**/*.js'],
-                tasks: ['less', 'concat'],
+                files: ['src/less/**/*.less', 'src/js/**/*.js', 'src/data/characters.yml', 'crawler/**/*.js'],
+                tasks: ['less', 'concat', 'yaml'],
                 options: {
                     nospawn: true,
                     livereload: true
@@ -45,6 +41,16 @@ module.exports = function(grunt) {
                     'src/js/main.js'
                 ],
                 dest: 'app.js'
+            }
+        },
+        yaml: {
+            heroes: {
+                options: {
+                    space: 4
+                },
+                files: {
+                    'src/data/characters.json': ['src/data/characters.yml']
+                }
             }
         }
     });
