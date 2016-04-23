@@ -43,13 +43,13 @@ function crawlController(numberOfCrawls, data) {
         }
 
 
-        var dir = './src/img/characters_new';
+        var dir = './src/img/characters';
 
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir)
         }
 
-        request(imageUrl).pipe(fs.createWriteStream('./src/img/characters_new/' + characterName + '.jpg'));
+        request(imageUrl).pipe(fs.createWriteStream('./src/img/characters/' + characterName + '.jpg'));
 
         this.completeCharacters[characterName] = {name: characterName, imageUrl: imageUrl}
         var crawlsLeft = this.numberOfCrawls - this.crawlsFinished;
