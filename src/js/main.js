@@ -6,7 +6,7 @@ $(function() {
 
     $.ajax({
         dataType: "json",
-        url: 'src/data/characters.json',
+        url: 'src/data/character_raw.json',
         success: function(result) {
             new got.Map(settings, result);
         }
