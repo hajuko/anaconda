@@ -1,3 +1,5 @@
+var jasmine = require('jasmine-node');
+
 module.exports = function(grunt) {
     require('load-grunt-tasks')(grunt);
 
@@ -16,7 +18,7 @@ module.exports = function(grunt) {
         },
         watch: {
             styles: {
-                files: ['src/less/**/*.less', 'src/js/**/*.js', 'src/data/characters.yml'],
+                files: ['src/less/**/*.less', 'src/js/**/*.js', 'src/data/characters.yml', 'crawler/**/*.js'],
                 tasks: ['less', 'concat', 'yaml'],
                 options: {
                     nospawn: true,
