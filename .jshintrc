@@ -10,9 +10,9 @@
     "undef": true,
     "unused": true,
     "nonbsp": true,
-    "es3": true,
     "browser": true,
     "devel": true,
+    "node": true,
     "jquery": true,
 
     "globals" :  {

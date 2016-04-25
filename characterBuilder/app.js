@@ -1,6 +1,7 @@
 var fs = require('fs');
 var imagePath = 'src/img/characters';
-var gm = require('gm').subClass({iamgeMagick: true});
+var imagemagick = require('imagemagick-native');
+
 function createCharacters() {
     var images = fs.readdirSync(imagePath);
     var coordinates = createCoordinates();
@@ -63,14 +64,24 @@ function renameImages() {
 }
 
 function resizeImages() {
-    var src = imagePath + '/' + 'aemon.jpg';
-    console.log(src);
-    gm('aemon.jpg').size(function(err, data) {
-        if (err) {
-            console.log(err);
-        }
+    var src = 'qotho.jpg';
+    console.log('asd');
 
-        console.log(data);
-    })
+    var images = fs.readdirSync('src/images');
+
+    console.log(images);
+
+    images.forEach(function(file) {
+        fs.readFile(file, function(err, img) {
+            imagemagick.identify({srcData: img}, function(err, result) {
+                var width = result.width;
+                var height = result.height;
+
+                console.log(result);
+            });
+        });
+    });
+
+    console.log(src);
 }
 resizeImages();
