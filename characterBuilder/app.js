@@ -64,24 +64,31 @@ function renameImages() {
 }
 
 function resizeImages() {
-    var src = 'qotho.jpg';
-    console.log('asd');
-
     var images = fs.readdirSync('src/images');
-
-    console.log(images);
-
     images.forEach(function(file) {
-        fs.readFile(file, function(err, img) {
-            imagemagick.identify({srcData: img}, function(err, result) {
-                var width = result.width;
-                var height = result.height;
-
+        var imagePath = 'src/images/' + file;
+        var image = fs.readFileSync(imagePath);
+        imagemagick.identify({
+            srcData: image
+        }, function(err, result) {
+            if (!result) {
+                console.log(err);
+                console.log(file);
+            } else {
                 console.log(result);
-            });
+            }
+
+
+            //if (result.format == 'PNG') {
+            //    imagePath = imagePath.replace('png', 'jpg');
+            //}
+            //
+            //fs.writeFileSync(imagePath, imagemagick.convert({
+            //    srcData: image,
+            //    format: 'jpg',
+            //    quality: 90 // (best) to 1 (worst)
+            //}));
         });
     });
-
-    console.log(src);
 }
 resizeImages();
